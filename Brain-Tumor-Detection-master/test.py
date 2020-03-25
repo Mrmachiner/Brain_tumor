@@ -185,8 +185,33 @@ def compute_f1_score(y_true, prob):
     score = f1_score(y_true, y_pred)
     
     return score
-X_train, y_train, X_val, y_val, X_test, y_test = split_data(X, y, test_size=0.3)
+
+# X_train, y_train, X_val, y_val, X_test, y_test = split_data(X, y, test_size=0.3)
+
+# print ("number of training examples = " + str(X_train.shape[0]))
+# print ("number of development examples = " + str(X_val.shape[0]))
+# print ("number of test examples = " + str(X_test.shape[0]))
+# print ("X_train shape: " + str(X_train.shape))
+# print ("Y_train shape: " + str(y_train.shape))
+# print ("X_val (dev) shape: " + str(X_val.shape))
+# print ("Y_val (dev) shape: " + str(y_val.shape))
+# print ("X_test shape: " + str(X_test.shape))
+# print ("Y_test shape: " + str(y_test.shape))
+img_test = cv2.imread("/home/anhdq23/Downloads/brain_tumor_dataset/yes/Y243.JPG")
+# cv2.imshow("img_test",img_test)
+# cv2.waitKey()
+# cv2.destroyAllWindows()
+img_test = crop_brain_contour(img_test)
+img_test = cv2.resize(img_test, dsize=(240, 240), interpolation=cv2.INTER_CUBIC)
+cv2.imshow("img_test",img_test)
+a = []
+a.append(img_test)
+a = np.array(a)
+print(img_test.shape)
+# cv2.waitKey()
+
+img_arr = np.array(img_test)
+
 best_model = load_model(filepath='models/cnn-parameters-improvement-10-0.81.model')
-y_test_prob = best_model.predict(X_test)
-f1score = compute_f1_score(y_test, y_test_prob)
-print(f"F1 score: {f1score}")
+y_test_prob = best_model.predict(a)
+print(y_test_prob)
