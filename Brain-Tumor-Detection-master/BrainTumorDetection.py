@@ -55,7 +55,7 @@ def crop_brain_contour(image, plot=False):
         plt.title('Original Image')
             
         plt.subplot(1, 2, 2)
-        plt.imshow(new_image)
+        #plt.imshow(new_image)
 
         plt.tick_params(axis='both', which='both', 
                         top=False, bottom=False, left=False, right=False,
@@ -63,7 +63,7 @@ def crop_brain_contour(image, plot=False):
 
         plt.title('Cropped Image')
         
-        plt.show()
+        #plt.show()
     
     return new_image
 # ex_img = cv2.imread('yes/Y1.jpg')
