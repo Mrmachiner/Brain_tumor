@@ -26,7 +26,7 @@ def crop_brain_contour(image, plot=False):
     thresh = cv2.threshold(gray, 45, 255, cv2.THRESH_BINARY)[1]
     thresh = cv2.erode(thresh, None, iterations=2)
     thresh = cv2.dilate(thresh, None, iterations=2)
-
+    #https://github.com/MohamedAliHabib/Brain-Tumor-Detection
     # Find contours in thresholded image, then grab the largest one
     cnts = cv2.findContours(thresh.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
     cnts = imutils.grab_contours(cnts)
