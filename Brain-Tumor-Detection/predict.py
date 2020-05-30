@@ -4,6 +4,7 @@ import cv2
 import imutils
 import numpy as np
 import matplotlib.pyplot as plt
+import time
 def crop_brain_contour(image, plot=False):
     
     #import imutils
@@ -61,21 +62,19 @@ def crop_brain_contour(image, plot=False):
     return new_image
 
 
+best_model = load_model(filepath='models/cnn-parameters-improvement-23-0.91.model')
 img_test = cv2.imread("/home/minhhoang/Brain_tumor/brain_tumor_dataset/yes/Y26.jpg")
 cv2.imshow("img_test",img_test)
 cv2.waitKey()
 cv2.destroyAllWindows()
 img_test = crop_brain_contour(img_test)
 img_test = cv2.resize(img_test, dsize=(240, 240), interpolation=cv2.INTER_CUBIC)
-cv2.imshow("img_test",img_test)
+img_test = tf.cast(img_test, tf.float32)
 a = []
 a.append(img_test)
 a = np.array(a)
 print(img_test.shape)
-# cv2.waitKey()
-
-img_arr = np.array(img_test)
-
-best_model = load_model(filepath='/home/minhhoang/Brain_tumor/Brain-Tumor-Detection-master/models/cnn-parameters-improvement-23-0.91.model')
+start = time.time()
 y_test_prob = best_model.predict(a)
+print("Processing time:", time.time() - start)
 print(y_test_prob)
