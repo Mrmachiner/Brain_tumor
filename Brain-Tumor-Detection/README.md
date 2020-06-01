@@ -1,14 +1,3 @@
-# Brain-Tumor-Detector
-Building a detection model using a convolutional neural network in Tensorflow & Keras.<br>
-Used a brain MRI images data founded on Kaggle. You can find it [here](https://www.kaggle.com/navoneel/brain-mri-images-for-brain-tumor-detection).<br>
-
-**About the data:**<br>
-The dataset contains 2 folders: yes and no which contains 253 Brain MRI Images. The folder yes contains 155 Brain MRI Images that are tumorous and the folder no contains 98 Brain MRI Images that are non-tumorous.
-
-# Getting Started
-
-**Note:** sometimes viewing IPython notebooks using GitHub viewer doesn't work as expected, so you can always view them using [nbviewer](https://nbviewer.jupyter.org/).
-
 ## Data Augmentation:
 
 **Why did I use data augmentation?**
@@ -65,16 +54,13 @@ Firstly, I applied transfer learning using a ResNet50 and vgg-16, but these mode
 So why not try a simpler architecture and train it from scratch. And it worked :)
 
 # Training the model
-The model was trained for 24 epochs and these are the loss & accuracy plots:
-
-
-![Loss plot](Loss.PNG)
-
-
-![Accuracy plot](Accuracy.PNG)
-
-The best validation accuracy was achieved on the 23rd iteration.
-
+> $ while read requirement; do conda install --yes $requirement; done < requirements.txt
+> python train.py
+# Predict model
+> python gui/predict.py
+* predict with GUI
+> python gui/opendialog.py 
+* click button openfile image
 # Results
 
 Now, the best model (the one with the best validation accuracy) detects brain tumor with:<br>
@@ -91,25 +77,6 @@ These resutls are very good considering that the data is balanced.
 | F1 score  | 0.91           | 0.88     |
 
 
-# Final Notes
-
-What's in the files?
-
-1. The code in the IPython notebooks.
-2. The weights for all the models. The best model is named as 'cnn-parameters-improvement-23-0.91.model'.
-3. The models are stored as *.model* files. They can be restored as follows:
-
-
-```
-from tensorflow.keras.models import load_model
-best_model = load_model(filepath='models/cnn-parameters-improvement-23-0.91.model')
-```
-
-4. The original data in the folders named 'yes' and 'no'. And, the augmented data in the folder named 'augmented data'.
-
-
-Contributes are welcome!
-<br>Thank you!
 
 
 
