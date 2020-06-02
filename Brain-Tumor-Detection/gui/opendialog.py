@@ -19,6 +19,9 @@ def is_an_image_file(filename):
     return False
 
 class Ui_MainWindow(object):
+    def __init__(self):
+        super().__init__()
+        self.pre = Predict()
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(800, 600)
@@ -30,7 +33,7 @@ class Ui_MainWindow(object):
         self.label = QtWidgets.QLabel(self.centralwidget)
         self.label.setGeometry(QtCore.QRect(10, 10, 301, 391))
         self.label.setText("")
-        self.label.setPixmap(QtGui.QPixmap("../../brain_tumor_dataset/yes/Y1.jpg"))
+        self.label.setPixmap(QtGui.QPixmap("../../data_test/yes/Y1.jpg"))
         self.label.setScaledContents(True)
         self.label.setObjectName("label")
         MainWindow.setCentralWidget(self.centralwidget)
@@ -43,10 +46,6 @@ class Ui_MainWindow(object):
         MainWindow.setStatusBar(self.statusbar)
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
-
-        self.best_model = load_model(filepath='/home/minhhoang/Brain_tumor/Brain-Tumor-Detection/models/cnn-parameters-improvement-23-0.91.model')
-
-
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
@@ -68,13 +67,12 @@ class Ui_MainWindow(object):
             msg.setText("Please open file .jpg .png .jpeg !!!")
             msg.setWindowTitle("Erro!!!")
             msg.exec_()
-
-
         if check:
-            pre = Predict()
-            pre, time = pre.predict_img(filename[0], self.best_model)
-            print(pre)
-            print(time)
+            self.process(filename[0])
+    def process(self, path):
+        pre, time = self.pre.predict_img(path)
+        print(pre)
+        print(time)
         # print(filename[0])
 if __name__ == "__main__":
     import sys
