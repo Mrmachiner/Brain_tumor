@@ -5,22 +5,10 @@
 # Created by: PyQt5 UI code generator 5.9.2
 #
 # WARNING! All changes made in this file will be lost!
+
 from PyQt5 import QtCore, QtGui, QtWidgets
-from predict import Predict
-from tensorflow.keras.models import load_model
-import tensorflow as tf
-import time
-import cv2
-def is_an_image_file(filename):
-    IMAGE_EXTENSIONS = ['.png', '.jpg', '.jpeg']
-    for ext in IMAGE_EXTENSIONS:
-        if ext in filename:
-            return True
-    return False
+
 class Ui_MainWindow(object):
-    def __init__(self):
-        super().__init__()
-        self.pre = Predict()
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(1057, 630)
@@ -95,8 +83,6 @@ class Ui_MainWindow(object):
 
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
-        self.retranslateUi(MainWindow)
-        QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
@@ -115,69 +101,7 @@ class Ui_MainWindow(object):
         self.label_10.setText(_translate("MainWindow", "Threshold"))
         self.label_11.setText(_translate("MainWindow", "Crop"))
         self.label_12.setText(_translate("MainWindow", "Tumor"))
-        self.pushButton.clicked.connect(self.pushButton_handler)
-    def pushButton_handler(self):
-        self.open_diablog_box()
 
-    def open_diablog_box(self):
-        check = False
-        filename = QtWidgets.QFileDialog.getOpenFileName()
-        if is_an_image_file(filename[0]):
-            self.label.setPixmap(QtGui.QPixmap(filename[0]))
-            check = True
-        else:
-            msg = QtWidgets.QMessageBox()
-            msg.setIcon(QtWidgets.QMessageBox.Information)
-            msg.setText("Please open file .jpg .png .jpeg !!!")
-            msg.setWindowTitle("Erro!!!")
-            msg.exec_()
-        if check:
-            start = time.time()
-
-            self.process(filename[0])
-            process_time = time.time() - start
-            print("abcd", process_time)
-    def process(self, path):
-        pre, time, self.lst_img = self.pre.predict_img(path)
-        str_pre = ""
-        if pre[0][0] == 1:
-            str_pre = "Predict Brain Tumor :" + "\n" + "Processing Time :" + str(round(time, 2)) + "s"
-        else:
-            str_pre = "Predict No Brain Tumor:" + "\n" + "Processing Time :" + str(round(time, 2)) + "s"
-        self.textEdit.setText(str_pre)
-        self.show_img()
-        # print(filename[0])
-    def show_img(self):
-        img0 = QtGui.QImage(self.lst_img[0], self.lst_img[0].shape[1], self.lst_img[0].shape[0],QtGui.QImage.Format_Grayscale8)
-        pixmap0 = QtGui.QPixmap.fromImage(img0)
-        self.label_4.setPixmap(pixmap0)
-        self.label_4.setScaledContents(True)
-
-        img1 = QtGui.QImage(self.lst_img[1], self.lst_img[1].shape[1], self.lst_img[1].shape[0],QtGui.QImage.Format_Grayscale8)
-        pixmap1 = QtGui.QPixmap.fromImage(img1)
-        self.label_5.setPixmap(pixmap1)
-        self.label_5.setScaledContents(True)
-
-        img2 = QtGui.QImage(self.lst_img[2], self.lst_img[2].shape[1], self.lst_img[2].shape[0],QtGui.QImage.Format_Grayscale8)
-        pixmap2 = QtGui.QPixmap.fromImage(img2)
-        self.label_6.setPixmap(pixmap1)
-        self.label_6.setScaledContents(True)
-
-        
-        # for i in self.lst_img:
-        #     cv2.imshow("abcd", i)
-        #     cv2.waitKey()
-        
-        img3 = QtGui.QImage(self.lst_img[3], self.lst_img[3].shape[1], self.lst_img[3].shape[0],QtGui.QImage.Format_Grayscale8)
-        pixmap3 = QtGui.QPixmap.fromImage(img3)
-        self.label_7.setPixmap(pixmap3)
-        self.label_7.setScaledContents(True)
-        
-        
- 
-        # self.label5.setPixmap(self.lst_img[1])
-        # self.label6.setPixmap(self.lst_img[2])
-        # self.label7.setPixmap(self.lst_img[3])
 
 if __name__ == "__main__":
     import sys

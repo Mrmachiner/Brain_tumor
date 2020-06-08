@@ -15,20 +15,18 @@ class Predict():
         self.best_model = load_model(filepath='/home/minhhoang/Brain_tumor/Brain-Tumor-Detection/models/cnn-parameters-improvement-23-0.91.model')
         process_time = time.time() - start
         print("load model", process_time)
-    def crop_brain_contour(self, image, plot=False):
-        lst_img = []
+    def crop_brain_contour(self, image, plot=False):\
         #import imutils
         #import cv2
         #from matplotlib import pyplot as plt
         # Convert the image to grayscale, and blur it slightly
         gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-        gray = cv2.GaussianBlur(gray, (5, 5), 0)
-        lst_img.append(gray)
+        gray = cv2.GaussianBlur(gray, (5, 5), 0)\
 
         # Threshold the image, then perform a series of erosions +
         # dilations to remove any small regions of noise
-        thresh = cv2.threshold(gray, 150, 255, cv2.THRESH_BINARY)[1]
-        lst_img.append(thresh)
+        thresh = cv2.threshold(gray, 45, 255, cv2.THRESH_BINARY)[1]
+        
         #cv2.imshow("thresh", thresh)
         thresh = cv2.erode(thresh, None, iterations=2)
         thresh = cv2.dilate(thresh, None, iterations=2)
@@ -48,7 +46,6 @@ class Predict():
         
         # crop new image out of the original image using the four extreme points (left, right, top, bottom)
         new_image = image[extTop[1]:extBot[1], extLeft[0]:extRight[0]] 
-        lst_img.append(new_image)           
         #cv2.imshow("crop", new_image)
         if plot:
             plt.figure()
@@ -73,12 +70,62 @@ class Predict():
             
             #plt.show()
         
-        return new_image, lst_img
+        return new_image
+    
+    def lst_crop(self, image, plot=False):
+            lst_img = []
+            #import imutils
+            #import cv2
+            #from matplotlib import pyplot as plt
+            # Convert the image to grayscale, and blur it slightly
+            gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+            gray = cv2.GaussianBlur(gray, (5, 5), 0)
+            lst_img.append(gray)
+
+            # Threshold the image, then perform a series of erosions +
+            # dilations to remove any small regions of noise
+            thresh = cv2.threshold(gray, 150, 255, cv2.THRESH_BINARY)[1]
+            lst_img.append(thresh)
+            
+            #cv2.imshow("thresh", thresh)
+            thresh = cv2.erode(thresh, None, iterations=2)
+            thresh = cv2.dilate(thresh, None, iterations=2)
+            #cv2.imshow("erode and dilate", thresh)
+
+            # Find contours in thresholded image, then grab the largest one
+            cnts = cv2.findContours(thresh.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+            cnts = imutils.grab_contours(cnts)
+            c = max(cnts, key=cv2.contourArea)
+            
+
+            # Find the extreme points
+            extLeft = tuple(c[c[:, :, 0].argmin()][0])
+            extRight = tuple(c[c[:, :, 0].argmax()][0])
+            extTop = tuple(c[c[:, :, 1].argmin()][0])
+            extBot = tuple(c[c[:, :, 1].argmax()][0])
+            
+            # crop new image out of the original image using the four extreme points (left, right, top, bottom)
+            new_image = image[extTop[1]:extBot[1], extLeft[0]:extRight[0]] 
+            im_np = np.transpose(new_image,(1,0,2)).copy()
+            lst_img.append(im_np)    
+
+            tumor_ = cv2.resize(new_image, dsize=(240, 240), interpolation=cv2.INTER_CUBIC)
+            im_tumor_ = np.transpose(tumor_,(1,0,2)).copy()
+
+            lst_img.append(im_tumor_)       
+            #cv2.imshow("crop", new_image)
+            return new_image, lst_img
+    
     def predict_img(self, path_img='/home/minhhoang/Brain_tumor/data_test/yes/Y1.jpg'):
         img_test = cv2.imread(path_img)
-        img_test, lst_img = self.crop_brain_contour(img_test)
+        origi = img_test.copy()
+        img_test = self.crop_brain_contour(img_test)
         img_test = cv2.resize(img_test, dsize=(240, 240), interpolation=cv2.INTER_CUBIC)
-        lst_img.append(img_test)
+
+        img_crop, lst_img = self.lst_crop(origi)
+        # img_crop = cv2.resize(img_crop, dsize=(240, 240), interpolation=cv2.INTER_CUBIC)
+        # lst_img.append(img_crop)
+        #lst_img.append(img_test)
         img_test = img_test.astype(np.float64)
         # img_test = tf.cast(img_test, tf.float32)
         print(img_test.shape)
