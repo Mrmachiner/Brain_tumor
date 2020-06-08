@@ -10,7 +10,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 from predict import Predict
 from tensorflow.keras.models import load_model
 import tensorflow as tf
-
+import time
 def is_an_image_file(filename):
     IMAGE_EXTENSIONS = ['.png', '.jpg', '.jpeg']
     for ext in IMAGE_EXTENSIONS:
@@ -68,9 +68,13 @@ class Ui_MainWindow(object):
             msg.setWindowTitle("Erro!!!")
             msg.exec_()
         if check:
+            start = time.time()
+
             self.process(filename[0])
+            process_time = time.time() - start
+            print("abcd", process_time)
     def process(self, path):
-        pre, time = self.pre.predict_img(path)
+        pre, time, lst_img = self.pre.predict_img(path)
         print(pre)
         print(time)
         # print(filename[0])

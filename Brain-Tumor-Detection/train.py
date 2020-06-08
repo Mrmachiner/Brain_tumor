@@ -23,7 +23,7 @@ def crop_brain_contour(image, plot=False):
 
     # Threshold the image, then perform a series of erosions +
     # dilations to remove any small regions of noise
-    thresh = cv2.threshold(gray, 45, 255, cv2.THRESH_BINARY)[1]
+    thresh = cv2.threshold(gray, 75, 255, cv2.THRESH_BINARY)[1]
     thresh = cv2.erode(thresh, None, iterations=2)
     thresh = cv2.dilate(thresh, None, iterations=2)
     #https://github.com/MohamedAliHabib/Brain-Tumor-Detection
@@ -248,7 +248,7 @@ filepath="cnn-parameters-improvement-{epoch:02d}-{val_accuracy:.2f}"
 checkpoint = ModelCheckpoint("models/{}.model".format(filepath, monitor='val_acc', verbose=1, save_best_only=True, mode='max'))
 start_time = time.time()
 
-model.fit(x=X_train, y=y_train, validation_split=0.6, batch_size=16, epochs=10, validation_data=(X_val, y_val), callbacks=[tensorboard, checkpoint])
+model.fit(x=X_train, y=y_train, batch_size=16, epochs=10, validation_data=(X_val, y_val), callbacks=[tensorboard, checkpoint])
 
 end_time = time.time()
 execution_time = (end_time - start_time)

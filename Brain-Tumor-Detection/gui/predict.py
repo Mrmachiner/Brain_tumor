@@ -7,12 +7,16 @@ import matplotlib.pyplot as plt
 import time
 import os
 
-lst_img = []
+
 class Predict():
+    
     def __init__(self):
+        start = time.time()
         self.best_model = load_model(filepath='/home/minhhoang/Brain_tumor/Brain-Tumor-Detection/models/cnn-parameters-improvement-23-0.91.model')
+        process_time = time.time() - start
+        print("load model", process_time)
     def crop_brain_contour(self, image, plot=False):
-        
+        lst_img = []
         #import imutils
         #import cv2
         #from matplotlib import pyplot as plt
@@ -23,7 +27,7 @@ class Predict():
 
         # Threshold the image, then perform a series of erosions +
         # dilations to remove any small regions of noise
-        thresh = cv2.threshold(gray, 45, 255, cv2.THRESH_BINARY)[1]
+        thresh = cv2.threshold(gray, 150, 255, cv2.THRESH_BINARY)[1]
         lst_img.append(thresh)
         #cv2.imshow("thresh", thresh)
         thresh = cv2.erode(thresh, None, iterations=2)
@@ -69,32 +73,35 @@ class Predict():
             
             #plt.show()
         
-        return new_image
+        return new_image, lst_img
     def predict_img(self, path_img='/home/minhhoang/Brain_tumor/data_test/yes/Y1.jpg'):
         img_test = cv2.imread(path_img)
-        img_test = self.crop_brain_contour(img_test)
+        img_test, lst_img = self.crop_brain_contour(img_test)
         img_test = cv2.resize(img_test, dsize=(240, 240), interpolation=cv2.INTER_CUBIC)
         lst_img.append(img_test)
-        img_test = tf.cast(img_test, tf.float32)
+        img_test = img_test.astype(np.float64)
+        # img_test = tf.cast(img_test, tf.float32)
+        print(img_test.shape)
         a = []
         a.append(img_test)
         a = np.array(a)
+
         start = time.time()
         y_test_prob = self.best_model.predict(a)
         process_time = time.time() - start
-        return y_test_prob, process_time
+        return y_test_prob, process_time, lst_img
 
 if __name__ == "__main__":
     predict = Predict()
     # path_model = '/home/minhhoang/Brain_tumor/Brain-Tumor-Detection/models/cnn-parameters-improvement-23-0.91.model'
     # best_model = load_model(filepath=path_model)
-    check, time = predict.predict_img()
+    check, time, lst_img = predict.predict_img()
     print(check)
     print(time)
     if check[0][0]==1:
         print("sida")
     for img in lst_img:
         cv2.imshow("jpg", img)
-
+        cv2.imwrite("abcd.jpg", img)
         cv2.waitKey()
         cv2.destroyAllWindows()
